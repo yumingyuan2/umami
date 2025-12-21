@@ -179,6 +179,18 @@ export default {
   },
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs', 'ipaddr.js'],
+    outputFileTracingExcludes: {
+      '*': [
+        '**/@prisma/client/**/*mysql*',
+        '**/@prisma/client/**/*sqlite*',
+        '**/@prisma/client/**/*sqlserver*',
+        '**/@prisma/client/**/*cockroachdb*',
+        '**/prisma/build/**/*mysql*',
+        '**/prisma/build/**/*sqlite*',
+        '**/prisma/build/**/*sqlserver*',
+        '**/prisma/build/**/*cockroachdb*',
+      ],
+    },
   },
   typescript: {
     ignoreBuildErrors: true,
