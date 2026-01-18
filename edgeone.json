@@ -27,8 +27,8 @@
       "destination": "/api/scripts/telemetry"
     },
     {
-      "source": "/teams/:teamId/:path*",
-      "destination": "/:path*"
+      "source": "/teams/:teamId/:path(.*)",
+      "destination": "/:path"
     }
   ]
 }

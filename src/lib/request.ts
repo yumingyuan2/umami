@@ -77,6 +77,20 @@ export async function getJsonBody(request: Request) {
       }
     }
 
+    // Fix for EdgeOne/Next.js adapter issue: If clone() succeeds but returns empty content, try reading original request
+    if (!text && req !== request) {
+      try {
+        console.log('[RequestDebug] Clone was empty, trying original request body...');
+        const originalText = await request.text();
+        if (originalText) {
+          text = originalText;
+          console.log('[RequestDebug] Used original request body as clone was empty.');
+        }
+      } catch (e) {
+        console.error('[RequestDebug] Failed to read text from original request fallback', e);
+      }
+    }
+
     console.log('[RequestDebug] Raw Body Text:', text ? text.substring(0, 1000) : '<empty>');
 
     if (!text) {
