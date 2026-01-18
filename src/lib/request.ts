@@ -113,6 +113,14 @@ export async function getJsonBody(request: Request) {
       }
     }
 
+    // ULTRA EDGE CASE for EdgeOne / SCF:
+    // If Content-Length > 0 but body is empty, it means the stream is drained.
+    // Some adapters attach the raw body buffer to a symbol or property.
+    // We can try to reconstruct it if possible, but standard Fetch API doesn't allow it.
+    // However, we can check if there's a specific SCF context attached to headers or global object.
+    // BUT, since we saw 'Body is unusable: Body has already been read' in POC, we know the stream is closed.
+    // The only way 'request.json()' failed in POC is because it also tries to read the stream.
+
     console.log('[RequestDebug] Raw Body Text:', text ? text.substring(0, 1000) : '<empty>');
 
     if (!text) {
