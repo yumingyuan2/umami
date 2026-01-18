@@ -52,15 +52,30 @@ export async function getJsonBody(request: Request) {
     console.log('[RequestDebug] Method:', request.method, 'URL:', request.url);
 
     // Try to clone first
-    let req;
+    let req = request;
     try {
       req = request.clone();
     } catch (e) {
       console.warn('[RequestDebug] Clone failed, using original request', e);
-      req = request;
     }
 
-    const text = await req.text();
+    let text;
+    try {
+      text = await req.text();
+    } catch (textError) {
+      console.warn(
+        '[RequestDebug] Failed to read text from cloned request, trying original',
+        textError,
+      );
+      // Fallback: If clone failed to produce a readable stream (e.g. platform specific issue), try original
+      if (req !== request) {
+        try {
+          text = await request.text();
+        } catch (origError) {
+          console.error('[RequestDebug] Failed to read text from original request', origError);
+        }
+      }
+    }
 
     console.log('[RequestDebug] Raw Body Text:', text ? text.substring(0, 1000) : '<empty>');
 
